@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
       if(i === media.length){
         preloader.classList.add('preloader--hide')
         document.querySelector('body').classList.remove('hidden__body');
-        i = 0;
         percents.innerHTML = 100
       }
     }, 100);
