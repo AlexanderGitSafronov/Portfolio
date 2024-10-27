@@ -66,6 +66,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
       if (idx === 6) {
         linkVisit(idx);
       }
+      if (idx === 7) {
+        linkVisit(idx);
+      }
     });
   });
   function linkVisit(idx) {
