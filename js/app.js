@@ -40,6 +40,9 @@ if (ScrollTrigger.isTouch !== 1) {
             e.preventDefault();
             let target = document.querySelector(this.getAttribute('href'));
             gsap.to(window, {duration: 1, scrollTo: {y: target, offsetY: 100}});
+            setTimeout(() => {
+                ScrollTrigger.refresh();
+            }, 0); // Небольшая задержка для обновления
         });
     });
 }

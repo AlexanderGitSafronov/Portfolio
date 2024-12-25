@@ -1,24 +1,55 @@
 
 
 document.addEventListener('DOMContentLoaded', ()=>{
-  const preloader = document.querySelector('#preloader')
-  const percents = document.querySelector('#percents')
-  const media = document.querySelectorAll('img')
+
+  const preloader = document.querySelector('#preloader');
+  const percents = document.querySelector('#percents');
+  const media = document.querySelectorAll('img');
   let i = 0;
 
-  const interv =  setInterval(() => {
-      i++;
-      percents.innerHTML = ((i * 100) / media.length).toFixed(1)
-      if(i === media.length){
-        preloader.classList.add('preloader--hide')
-        document.querySelector('body').classList.remove('hidden__body');
-        percents.innerHTML = 100
-      }
-    }, 100);
+  const updateProgress = () => {
+    i++;
+    const progress = ((i * 100) / media.length).toFixed(1);
+    percents.innerHTML = progress;
 
-    setTimeout(() => {
+    if (i === media.length) {
       clearInterval(interv);
-    }, 2290);
+      preloader.classList.add('preloader--hide');
+      document.querySelector('body').classList.remove('hidden__body');
+      percents.innerHTML = '100';
+    }
+  };
+
+  const interv = setInterval(() => {
+    if (i < media.length) {
+      updateProgress();
+    }
+  }, 100); // Обновлять каждые 100 мс
+
+  media.forEach(img => {
+  img.onload = img.onerror = () => updateProgress();
+});
+
+
+
+  // const preloader = document.querySelector('#preloader')
+  // const percents = document.querySelector('#percents')
+  // const media = document.querySelectorAll('img')
+  // let i = 0;
+
+  // const interv =  setInterval(() => {
+  //     i++;
+  //     percents.innerHTML = ((i * 100) / media.length).toFixed(1)
+  //     if(i === media.length){
+  //       preloader.classList.add('preloader--hide')
+  //       document.querySelector('body').classList.remove('hidden__body');
+  //       percents.innerHTML = 100
+  //     }
+  //   }, 100);
+
+  //   setTimeout(() => {
+  //     clearInterval(interv);
+  //   }, 1000);
  
 //   Array.from(media).forEach((item,idx)=>{
 // item.onload = ()=>{
@@ -79,6 +110,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
         linkVisit(idx);
       }
       if (idx === 11) {
+        linkVisit(idx);
+      }
+      if (idx === 12) {
         linkVisit(idx);
       }
     });
@@ -188,6 +222,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       if (idx === 14) {
         linkVisitPet(idx);
       }
+      
     });
   });
   function linkVisitPet(idx) {

@@ -422,6 +422,26 @@ a {
   overflow: hidden;
   white-space: nowrap;
 }
+.main__works h2:nth-child(12):after {
+  content: "NewInspire";
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #cc5ab1;
+  width: 0px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.main__works h2:nth-child(13):after {
+  content: "TargetScience";
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #cc5ab1;
+  width: 0px;
+  overflow: hidden;
+  white-space: nowrap;
+}
 
 .main__works .btn__works h2:hover::after {
   animation: moveText 0.6s linear both;
