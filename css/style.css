@@ -383,6 +383,16 @@ a {
   white-space: nowrap;
 }
 .main__works h2:nth-child(8):after {
+  content: "DenisLupol";
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #cc5ab1;
+  width: 0px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+/* .main__works h2:nth-child(8):after {
   content: "AdversterX";
   position: absolute;
   top: 0;
@@ -391,8 +401,8 @@ a {
   width: 0px;
   overflow: hidden;
   white-space: nowrap;
-}
-.main__works h2:nth-child(9):after {
+} */
+/* .main__works h2:nth-child(9):after {
   content: "Mockups";
   position: absolute;
   top: 0;
@@ -401,8 +411,8 @@ a {
   width: 0px;
   overflow: hidden;
   white-space: nowrap;
-}
-.main__works h2:nth-child(10):after {
+} */
+.main__works h2:nth-child(9):after {
   content: "HireStudents";
   position: absolute;
   top: 0;
@@ -412,7 +422,7 @@ a {
   overflow: hidden;
   white-space: nowrap;
 }
-.main__works h2:nth-child(11):after {
+.main__works h2:nth-child(10):after {
   content: "CardPage";
   position: absolute;
   top: 0;
@@ -422,7 +432,7 @@ a {
   overflow: hidden;
   white-space: nowrap;
 }
-.main__works h2:nth-child(12):after {
+.main__works h2:nth-child(11):after {
   content: "NewInspire";
   position: absolute;
   top: 0;
@@ -432,7 +442,7 @@ a {
   overflow: hidden;
   white-space: nowrap;
 }
-.main__works h2:nth-child(13):after {
+.main__works h2:nth-child(12):after {
   content: "TargetScience";
   position: absolute;
   top: 0;
