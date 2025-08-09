@@ -413,7 +413,7 @@ a {
   white-space: nowrap;
 } */
 .main__works h2:nth-child(9):after {
-  content: "HireStudents";
+  content: "SmoothReviews";
   position: absolute;
   top: 0;
   left: 0;
@@ -423,7 +423,7 @@ a {
   white-space: nowrap;
 }
 .main__works h2:nth-child(10):after {
-  content: "CardPage";
+  content: "KliningTernopil";
   position: absolute;
   top: 0;
   left: 0;
