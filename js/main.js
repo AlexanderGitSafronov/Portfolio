@@ -1,251 +1,113 @@
 
+document.addEventListener('DOMContentLoaded', () => {
 
-document.addEventListener('DOMContentLoaded', ()=>{
-
+  // ===== PRELOADER (load-based) =====
   const preloader = document.querySelector('#preloader');
   const percents = document.querySelector('#percents');
+  const circle = document.querySelector('#preloaderCircle');
+  const circumference = 2 * Math.PI * 42; // r=42 => ~264
   const media = document.querySelectorAll('img');
-  let i = 0;
+  const total = media.length;
+  let loaded = 0;
 
-  const updateProgress = () => {
-    i++;
-    const progress = ((i * 100) / media.length).toFixed(1);
-    percents.innerHTML = progress;
+  function setCircleProgress(pct) {
+    if (!circle) return;
+    const offset = circumference - (pct / 100) * circumference;
+    circle.style.strokeDashoffset = offset;
+  }
 
-    if (i === media.length) {
-      clearInterval(interv);
-      preloader.classList.add('preloader--hide');
-      document.querySelector('body').classList.remove('hidden__body');
-      percents.innerHTML = '100';
+  function updateProgress() {
+    loaded++;
+    const percent = Math.round((loaded / total) * 100);
+    percents.innerHTML = percent;
+    setCircleProgress(percent);
+
+    if (loaded >= total) {
+      percents.innerHTML = 100;
+      setCircleProgress(100);
+      setTimeout(() => {
+        preloader.classList.add('preloader--hide');
+        document.querySelector('body').classList.remove('hidden__body');
+      }, 500);
     }
-  };
+  }
 
-  const interv = setInterval(() => {
-    if (i < media.length) {
-      updateProgress();
-    }
-  }, 100); // Обновлять каждые 100 мс
-
-  media.forEach(img => {
-  img.onload = img.onerror = () => updateProgress();
-});
-
-
-
-  // const preloader = document.querySelector('#preloader')
-  // const percents = document.querySelector('#percents')
-  // const media = document.querySelectorAll('img')
-  // let i = 0;
-
-  // const interv =  setInterval(() => {
-  //     i++;
-  //     percents.innerHTML = ((i * 100) / media.length).toFixed(1)
-  //     if(i === media.length){
-  //       preloader.classList.add('preloader--hide')
-  //       document.querySelector('body').classList.remove('hidden__body');
-  //       percents.innerHTML = 100
-  //     }
-  //   }, 100);
-
-  //   setTimeout(() => {
-  //     clearInterval(interv);
-  //   }, 1000);
- 
-//   Array.from(media).forEach((item,idx)=>{
-// item.onload = ()=>{
-//   console.log(item,idx)
-//   i++;
-//   percents.innerHTML = ((i * 100) / media.length).toFixed(1)
-//   if(i === media.length){
-//     preloader.classList.add('preloader--hide')
-//     percents.innerHTML = 100;
-//     document.querySelector('body').classList.remove('hidden__body');
-//   }
-  
-// }
-//   })
-
-
-
-
-
-  const worksH2 = document.querySelectorAll(
-    ".main__works_commercial .btn__works h2"
-  );
-  const links = document.querySelectorAll(".main__works_commercial .img__works");
-  
-  worksH2.forEach((item, idx) => {
-    item.addEventListener("click", () => {
-      if (idx === 0) {
-        linkVisit(idx);
+  if (total === 0) {
+    preloader.classList.add('preloader--hide');
+    document.querySelector('body').classList.remove('hidden__body');
+  } else {
+    media.forEach(img => {
+      if (img.complete) {
+        updateProgress();
+      } else {
+        img.addEventListener('load', updateProgress);
+        img.addEventListener('error', updateProgress);
       }
-      if (idx === 1) {
-        linkVisit(idx);
-      }
-      if (idx === 2) {
-        linkVisit(idx);
-      }
-      if (idx === 3) {
-        linkVisit(idx);
-      }
-      if (idx === 4) {
-        linkVisit(idx);
-      }
-      if (idx === 5) {
-        linkVisit(idx);
-      }
-      if (idx === 6) {
-        linkVisit(idx);
-      }
-      if (idx === 7) {
-        linkVisit(idx);
-      }
-      if (idx === 8) {
-        linkVisit(idx);
-      }
-      if (idx === 9) {
-        linkVisit(idx);
-      }
-      if (idx === 10) {
-        linkVisit(idx);
-      }
-      if (idx === 11) {
-        linkVisit(idx);
-      }
-      if (idx === 12) {
-        linkVisit(idx);
-      }
-    });
-  });
-  function linkVisit(idx) {
-    links.forEach((item) => {
-      item.classList.add("close");
-      links[idx].classList.remove("close");
     });
   }
-  
-  const anchors = document.querySelectorAll('a[href*="#"]');
-  
-  for (let anchor of anchors) {
-    anchor.addEventListener("click", function (e) {
-      e.preventDefault();
-  
-      const blockID = anchor.getAttribute("href").substr(1);
-  
-      document.getElementById(blockID).scrollIntoView({
-        behavior: "smooth",
-        block: "start",
+
+
+  // ===== COMMERCIAL PROJECTS — показ картинки по клику =====
+  const worksH2 = document.querySelectorAll('.main__works_commercial .btn__works h2');
+  const links = document.querySelectorAll('.main__works_commercial .img__works');
+
+  worksH2.forEach((item, idx) => {
+    item.addEventListener('click', () => {
+      links.forEach(link => link.classList.add('close'));
+      links[idx].classList.remove('close');
+    });
+  });
+
+
+  // ===== SMOOTH SCROLL (только для touch-устройств, GSAP обрабатывает десктоп) =====
+  if ('ontouchstart' in window) {
+    const headerH = document.querySelector('.header')?.offsetHeight || 80;
+    document.querySelectorAll('a[href*="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = anchor.getAttribute('href');
+        if (!href.includes('#')) return;
+        const id = href.split('#')[1];
+        const target = document.getElementById(id);
+        if (!target) return;
+        e.preventDefault();
+        const top = target.getBoundingClientRect().top + window.pageYOffset - headerH;
+        window.scrollTo({ top, behavior: 'smooth' });
       });
     });
   }
-  
-  // ТЕЛЕГРАМ
-  
+
+
+  // ===== TELEGRAM FORM =====
   const TOKEN = "6082700545:AAFbuZoez-lgQ5SDX2lUcOwUAHE_hI1fyOQ";
   const CHAT_ID = "-1001811810827";
   const URL_API = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
-  
-  document.getElementById("form").addEventListener("submit", function (e) {
+
+  document.getElementById('form').addEventListener('submit', function (e) {
     e.preventDefault();
-  
+
     let message = `<b>Заявка с сайта</b>\n`;
     message += `<b>Отправитель: </b> ${this.name.value}\n`;
     message += `<b>Номер: </b> ${this.cellphone.value}\n`;
     message += `<b>Адрес: </b> ${this.desc.value}`;
-  
-    axios
-      .post(URL_API, {
-        chat_id: CHAT_ID,
-        parse_mode: "html",
-        text: message,
-      })
-      .then((res) => {
-        this.name.value = "";
-        this.cellphone.value = "";
-        this.desc.value = "";
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  });
-  
-  const worksPet = document.querySelectorAll(".btn__works_pet h2");
-  const linksPet = document.querySelectorAll(".main__works_pet .img__works");
-  
-  worksPet.forEach((item, idx) => {
-    item.addEventListener("click", () => {
-      if (idx === 0) {
-        linkVisitPet(idx);
-      }
-      if (idx === 1) {
-        linkVisitPet(idx);
-      }
-      if (idx === 2) {
-        linkVisitPet(idx);
-      }
-      if (idx === 3) {
-        linkVisitPet(idx);
-      }
-      if (idx === 4) {
-        linkVisitPet(idx);
-      }
-      if (idx === 5) {
-        linkVisitPet(idx);
-      }
-      if (idx === 5) {
-        linkVisitPet(idx);
-      }
-      if (idx === 6) {
-        linkVisitPet(idx);
-      }
-      if (idx === 7) {
-        linkVisitPet(idx);
-      }
-      if (idx === 8) {
-        linkVisitPet(idx);
-      }
-      if (idx === 9) {
-        linkVisitPet(idx);
-      }
-      if (idx === 10) {
-        linkVisitPet(idx);
-      }
-      if (idx === 11) {
-        linkVisitPet(idx);
-      }
-      if (idx === 12) {
-        linkVisitPet(idx);
-      }
-      if (idx === 13) {
-        linkVisitPet(idx);
-      }
-      if (idx === 14) {
-        linkVisitPet(idx);
-      }
-      
+
+    axios.post(URL_API, {
+      chat_id: CHAT_ID,
+      parse_mode: 'html',
+      text: message,
+    }).then(() => {
+      this.name.value = '';
+      this.cellphone.value = '';
+      this.desc.value = '';
+    }).catch(err => {
+      console.log(err);
     });
   });
-  function linkVisitPet(idx) {
-    linksPet.forEach((item) => {
-      item.classList.add("close");
-      linksPet[idx].classList.remove("close");
-    });
-  }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  const languageSelect = document.querySelector('select')
-  const languageSelectOpt = document.querySelector('select').getElementsByTagName('option')
-  
-  
-  
-  
+
+
+  // ===== LANGUAGE SWITCH =====
+  const langToggle = document.querySelector('#langToggle');
+  const langBtns = langToggle ? langToggle.querySelectorAll('.lang-btn') : [];
+
   const language = {
     en: [
       "Hi, my name is Alexander and I am Front-End Developer",
@@ -255,7 +117,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
       "Personal projects",
       "CONTACT",
       "Contact Us",
-    
     ],
     uk: [
       "Привіт, мене звати Олександр і я Front-End розробник",
@@ -265,24 +126,22 @@ document.addEventListener('DOMContentLoaded', ()=>{
       "Особисті проекти",
       "КОНТАКТИ",
       "Зв'яжіться зі мною",
-    
     ]
-  }
-  
-  
+  };
+
   const languageDesc = {
     en: [
       "Game of crosses and zeros. With unique design and animations",
       "Functionality of adding goods to cart, working with LocalStorage, sum calculation is implemented",
       "A minimalistic weather forecast website that works with an API",
       "A minimalistic currency converter website that works with an API",
-      "Dasboard layout",
+      "Dashboard layout",
       "Gallery that can be scrolled with the cursor",
       "Beautiful gallery that can be scrolled with the mouse wheel",
-      "Gallery in which the effect of rparalax and background blur repeating the picture is realized",
-      "The page is designed with beautiful paralax effect, smooth scrolling and block popups",
+      "Gallery with parallax and background blur repeating the picture",
+      "The page is designed with beautiful parallax effect, smooth scrolling and block popups",
       "The main page of the furniture store was created",
-      "A game in which you have to click the blocks as fast as possible in a certain time. With a counter",
+      "A game in which you have to click the blocks as fast as possible. With a counter",
       "Sneaker store one page website layout",
       "Simple layout of a one-page website",
       "Simple layout of a one-page website",
@@ -296,154 +155,73 @@ document.addEventListener('DOMContentLoaded', ()=>{
       "Макет інформаційної панелі",
       "Галерея, яку можна прокручувати курсором",
       "Красива галерея, яку можна прокручувати за допомогою колеса миші",
-      "Галерея, в якій реалізовано ефект paralax та розмиття фону, що повторює картинку",
-      "Сторінка розроблена з красивим ефектом паралаксу, плавною прокруткою і блочними спливаючими вікнами",
+      "Галерея, в якій реалізовано ефект parallax та розмиття фону",
+      "Сторінка з красивим ефектом паралаксу, плавною прокруткою і спливаючими вікнами",
       "Створено головну сторінку меблевого магазину",
-      "Гра, в якій потрібно натискати на блоки якомога швидше за певний час. З лічильником",
+      "Гра, в якій потрібно натискати на блоки якомога швидше. З лічильником",
       "Верстка односторінкового сайту магазину кросівок",
       "Проста верстка односторінкового сайту",
       "Простий макет односторінкового сайту",
       "Простий калькулятор. З реалізацією лічильника"
     ]
-  }
-  
+  };
+
   const languageMenu = {
-    en:[
-      "Works",
-      "Contact",
-      "CV",
-      "Contact Me"
-    ],
-    uk:[
-      "Проекти",
-      "Зв'язок",
-      "CV",
-      "Зв'яжіться зі мною"
-    ]
-  }
+    en: ["Works", "Contact", "CV", "Contact Me"],
+    uk: ["Проекти", "Зв'язок", "CV", "Зв'яжіться зі мною"]
+  };
+
   const languageForm = {
-    en:[
-      "Name",
-      "Messegers",
-      "Description",
-      "Send"
-    ],
-    uk:[
-      "Ім'я",
-      "Контакти",
-      "Опис",
-      "Відправити"
-    ]
+    en: ["Name", "Messengers", "Description", "Send"],
+    uk: ["Ім'я", "Контакти", "Опис", "Відправити"]
+  };
+
+  const headerTextH1 = document.querySelector('.main__title_h1');
+  const headerTextPink = document.querySelector('.main__title_pink');
+  const headerTextP = document.querySelector('.main__title_p');
+  const titlesSection = document.querySelectorAll('.section-title');
+  const descProj = document.querySelectorAll('.pet__site_title h4');
+  const formTitle = document.querySelector('.form h4');
+  const formBtn = document.querySelector('form button');
+  const headerBtn = document.querySelector('.buy a');
+  const navA = document.querySelectorAll('.nav ul li a');
+  const form = document.querySelector('form');
+
+  function setActiveLangBtn(lang) {
+    langBtns.forEach(b => {
+      b.classList.toggle('lang-btn--active', b.dataset.lang === (lang === 'uk' ? 'ua' : 'en'));
+    });
   }
-  
-  
-  
-  const headerTextH1 = document.querySelector('.main__title_h1')
-  const headerTextPink = document.querySelector('.main__title_pink')
-  const headerTextP = document.querySelector('.main__title_p')
-  const titlesSection = document.querySelectorAll('#works')
-  const descProj = document.querySelectorAll('.pet__site_title h4')
-  const formTitle = document.querySelector('.form h4')
-  const btnContact = document.querySelector('.buy a')
-  const navA = document.querySelectorAll('.nav ul li a')
-  const form = document.querySelector('form')
-  const formBtn = document.querySelector('form button')
-  const headerBtn = document.querySelector('.buy a')
-  
-  
 
-  
-  
-  languageSelect.addEventListener('change',()=>{
-    if(languageSelect.value === "ua"){
-      localStorage.setItem("language", JSON.stringify("ua"));
-      languageUa();
-      languageKey = JSON.parse(localStorage.getItem("language")) 
-      formBtn.classList.remove('en')
-    formBtn.classList.add('uk')
-    headerBtn.classList.remove('en')
-    headerBtn.classList.add('uk')
-      // btnContact.textContent = language.uk[7]
-    } else {
-       localStorage.setItem("language", JSON.stringify("en"));
-      languageEn();
-      languageKey = JSON.parse(localStorage.getItem("language")) 
-      formBtn.classList.remove('uk')
-      formBtn.classList.add('en')
-      headerBtn.classList.remove('uk')
-      headerBtn.classList.add('en')
-      // btnContact.textContent = language.en[7]
-    }
-  })
-  
-  function languageUa(){
-    headerTextH1.textContent = language.uk[0];
-    headerTextPink.innerHTML = language.uk[1];
-    headerTextP.textContent = language.uk[2];
-    titlesSection[0].textContent = language.uk[3];
-    titlesSection[1].textContent = language.uk[4];
-    titlesSection[2].textContent = language.uk[5];
-    descProj.forEach((item,idx)=>{
-      item.textContent = languageDesc.uk[idx];
-    })
-    formTitle.textContent = language.uk[6];
-    navA.forEach((item,idx)=>{
-      item.textContent = languageMenu.uk[idx];
-    })
-    form.name.placeholder = languageForm.uk[0];
-    form.cellphone.placeholder = languageForm.uk[1];
-    form.desc.placeholder = languageForm.uk[2];
-    formBtn.textContent = languageForm.uk[3];
-    headerBtn.textContent = languageMenu.uk[3];
+  function applyLanguage(lang) {
+    headerTextH1.textContent = language[lang][0];
+    headerTextPink.innerHTML = language[lang][1];
+    headerTextP.textContent = language[lang][2];
+    titlesSection.forEach((el, i) => { el.textContent = language[lang][3 + i]; });
+    descProj.forEach((el, i) => { el.textContent = languageDesc[lang][i]; });
+    formTitle.textContent = language[lang][6];
+    navA.forEach((el, i) => { el.textContent = languageMenu[lang][i]; });
+    form.name.placeholder = languageForm[lang][0];
+    form.cellphone.placeholder = languageForm[lang][1];
+    form.desc.placeholder = languageForm[lang][2];
+    formBtn.textContent = languageForm[lang][3];
+    headerBtn.textContent = languageMenu[lang][3];
+    setActiveLangBtn(lang);
   }
-  function languageEn(){
-    headerTextH1.textContent = language.en[0];
-    headerTextPink.innerHTML = language.en[1];
-    headerTextP.textContent = language.en[2];
-    titlesSection[0].textContent = language.en[3];
-    titlesSection[1].textContent = language.en[4];
-    titlesSection[2].textContent = language.en[5];
-    descProj.forEach((item,idx)=>{
-      item.textContent = languageDesc.en[idx];
-    })
-    navA.forEach((item,idx)=>{
-      item.textContent = languageMenu.en[idx];
-    })
-    formTitle.textContent = language.en[6];
-    form.name.placeholder = languageForm.en[0];
-    form.cellphone.placeholder = languageForm.en[1];
-    form.desc.placeholder = languageForm.en[2];
-    formBtn.textContent = languageForm.en[3];
-    headerBtn.textContent = languageMenu.en[3];
+
+  langBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang === 'ua' ? 'uk' : 'en';
+      localStorage.setItem('language', JSON.stringify(lang));
+      applyLanguage(lang);
+    });
+  });
+
+  const savedLang = JSON.parse(localStorage.getItem('language'));
+  if (savedLang === 'uk') {
+    applyLanguage('uk');
+  } else if (savedLang === 'en') {
+    applyLanguage('en');
   }
-  
-  let languageKey = JSON.parse(localStorage.getItem("language")) || "";
 
-  if(languageKey === "ua"){
-    languageSelectOpt[1].selected = true;
-    languageUa();
-    formBtn.classList.remove('en')
-    formBtn.classList.add('uk')
-    headerBtn.classList.remove('en')
-    headerBtn.classList.add('uk')
-  }
-  if(languageKey === "en"){
-    languageSelectOpt[0].selected = true;
-    languageEn();
-    formBtn.classList.remove('uk')
-    formBtn.classList.add('en')
-    headerBtn.classList.remove('uk')
-    headerBtn.classList.add('en')
-  }
-  
-
-
-
-
-  
-})
-
-
-
-
-
+});

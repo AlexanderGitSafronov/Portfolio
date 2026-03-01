@@ -34,15 +34,17 @@ if (ScrollTrigger.isTouch !== 1) {
         });
     });
 
-    // Smooth scroll to anchor
+    // Smooth scroll to anchor with header offset
+    const headerEl = document.querySelector('.header');
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            const target = document.querySelector(href);
+            if (!target) return;
             e.preventDefault();
-            let target = document.querySelector(this.getAttribute('href'));
-            gsap.to(window, {duration: 1, scrollTo: {y: target, offsetY: 100}});
-            setTimeout(() => {
-                ScrollTrigger.refresh();
-            }, 0); // Небольшая задержка для обновления
+            const offset = (headerEl ? headerEl.offsetHeight : 80) + 16;
+            gsap.to(window, {duration: 1, scrollTo: {y: target, offsetY: offset}});
+            setTimeout(() => { ScrollTrigger.refresh(); }, 100);
         });
     });
 }
