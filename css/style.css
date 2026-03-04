@@ -5,7 +5,9 @@
   color: #fff;
   font-family: "Kdam Thmor Pro", sans-serif;
 }
-
+body{
+  background-color: #000;
+}
 .hidden__body {
   overflow: hidden;
 }
@@ -1017,3 +1019,12 @@ form button:active {
   text-shadow: 0 0 20px #cc5ab1;
 }
 
+
+@media (max-width: 768px) {
+  .header__right .buy a{
+    display: none;
+  }
+  .header{
+    padding: 10px 0px;
+  }
+}
